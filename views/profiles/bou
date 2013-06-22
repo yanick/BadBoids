@@ -1,0 +1,3 @@
+has [qw/ auth_url profiles user /] => (
+    is => 'ro',
+);

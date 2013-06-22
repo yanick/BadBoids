@@ -1,0 +1,16 @@
+<script id="tweet" type="text/html">
+<div class="tweet {{#budgie_hidden}}hidden{{/budgie_hidden}}" 
+    data-status-id="{{ id_str }}">
+    <div class="avatars">
+        <img class="main_avatar" src="{{ user.profile_image_url }}" />
+    </div>
+    <div class="main">
+        <div class="header">
+            <div class="time">{{created_at}}</div>
+            <div class="user"><b>{{user.name}}</b> @{{user.screen_name}}</div>
+        </div>
+        <div>{{&text}}</div>
+    </div>
+    <div class="hide_region">&nbsp;</div>
+</div>
+</script>

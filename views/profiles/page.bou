@@ -1,0 +1,23 @@
+use Template::Caribou::Tags::HTML qw/ :all /;
+use Template::Caribou::Tags::HTML::Extended qw/ anchor /;
+
+html { body { 
+div {
+    "Hi " . $self->user->{user};
+};
+
+h1 { 'Profiles' };
+
+ul {
+    for ( @{ $self->profiles } ) {
+        li { anchor "/profile/" . $_->{screen_name} => $_->{screen_name} };
+    }
+};
+
+div {
+    print 'to add a new profile, follow ';
+    anchor $self->auth_url => 'this link';
+    print ::RAW ' and authenticate using the desired twitter account';
+}
+
+} };

@@ -1,0 +1,172 @@
+use Template::Caribou::Tags qw/ attr /;
+use Template::Caribou::Tags::HTML ':all';
+use Template::Caribou::Tags::HTML::Extended 
+    qw/ javascript_include javascript css_include /;
+
+html {
+    head {
+        title { 'Budgerigars - Piou?' };
+        javascript_include '/javascripts/jquery.js';
+        javascript_include '/javascripts/mustache.js';
+        javascript_include '/javascripts/jquery.mustache.js';
+
+        css_include '/javascripts/bootstrap/css/bootstrap.min.css';
+        javascript_include '/javascripts/bootstrap/js/bootstrap.min.js';
+        style { <<'END';
+div.tweet {
+    width: 550px;
+    border-bottom: 1px solid lightgrey;
+    margin-bottom: 0.5em;
+    padding: 0.5em;
+}
+div.tweet .avatars {
+    display: inline-block;
+    width: 60px;
+    vertical-align: top;
+}
+div.tweet .avatars img.main_avatar {
+    width: 48px;
+}
+div.tweet.hidden {
+    background-color: lightgrey;
+    display: none;
+}
+div.tweet div.main {
+    display: inline-block;
+    width: 420px;
+}
+div.tweet .main .header {
+    position: relative;
+}
+div.tweet .main .header .time {
+    position: absolute;
+    right: 0px;
+    width: 50px;
+    text-align: right;
+}
+div.tweet .hide_region {
+    width: 3em;
+    background-color: lightgrey;
+    display: inline-block;
+    vertical-align: top;
+    height: 4em;
+}
+END
+        };
+    };
+    body {
+
+div { attr class => 'row'; 
+
+div { attr class => 'span8 offset3';
+
+div { 
+    a {
+        attr href => '#dummy',
+             onclick => q{$('.tweet.hidden').show(); return false};
+        "show all";
+    };
+    a {
+        attr href => '#dummy',
+             onclick => q{$('.tweet.hidden').hide(); return false};
+        "hide tweets";
+    };
+};
+
+input {
+    attr type => 'button', value => 'update', id => 'refresh_button', 
+        onclick =>
+        q[$(this).attr('disabled',true);update_and_refresh().done(function(){$('#refresh_button').attr('disabled',false)})];
+};
+
+
+div { attr id => 'timeline_firehose', class => 'timeline';
+    div {
+        attr class => 'upcoming';
+        div { attr class => 'queue', style => 'display: none'; ' ';};
+        div { attr class => 'notification'; ' ' };
+    };
+    div { attr class => 'tweets'; };
+};
+
+};
+};
+
+javascript <<'END';
+
+function refresh_timelines( startup ) {
+
+    // in the upcoming queue or in the list proper
+    var $latest = $('#timeline_firehose .tweet:eq(0)');
+    var params = '';
+
+    if ( $latest.length > 0 ) {
+        params = '?after=' + $latest.attr('data-status-id');
+    }
+
+    $.get( document.URL + '/timeline/home' + params ).done(function(data){
+        for ( var i = 0; i < data.length; i++ ) {
+            $('#timeline_firehose .upcoming .queue').mustache('tweet', data[i] );
+        }
+
+        var $upcoming = $('#timeline_firehose .upcoming');
+        var $new_tweets = $upcoming.find('.queue .tweet');
+
+        var $notification = $upcoming.find('.notification');
+        
+        if ( $new_tweets.length > 0 ) {
+            console.log( 'new tweets' );
+            $notification.text(
+                '' + $new_tweets.length + ' new tweets'
+            ).show().click(function(){
+                var $timeline = $(this).closest('.timeline');
+                $timeline.find('.upcoming .tweet').detach().prependTo(
+                    $timeline.find('.tweets')
+                );
+                $(this).hide();
+            });
+        } else {
+            console.log( 'no new tweets' );
+            $notification.hide();
+        }
+
+        if( startup ) {
+            $notification.click();
+        }
+
+    });
+
+}
+
+function update_and_refresh() {
+    console.log( "updating" );
+    return $.get( document.URL + '/update' ).done(function(){
+        console.log( "profile updated" );
+        refresh_timelines();
+    });
+}
+
+$(function(){
+   $.Mustache.load('/mustache/tweet.html').done(function(){
+        refresh_timelines(true);
+    });
+
+    $(document).on('mouseenter','.hide_region',function(){
+        $(this).css('background-color','red');
+    });
+    $(document).on('mouseleave','.hide_region',function(){
+        $(this).css('background-color','lightgrey');
+    });
+    $(document).on('click','.hide_region',function(){
+        var $tweet = $(this).closest('.tweet');
+
+        $.post( '/status/' + $tweet.attr('data-status-id') + '/toggle' );
+
+        $tweet.toggleClass('hidden');
+    });
+
+    setInterval( update_and_refresh, 5 * 60 * 1000);
+});
+END
+    };
+};
