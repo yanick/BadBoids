@@ -8,9 +8,9 @@ my $eumm_version = $ExtUtils::MakeMaker::VERSION;
 $eumm_version =~ s/_//;
 
 WriteMakefile(
-    NAME                => 'Twisters',
+    NAME                => 'BadBoids',
     AUTHOR              => q{YOUR NAME <youremail@example.com>},
-    VERSION_FROM        => 'lib/Twisters.pm',
+    VERSION_FROM        => 'lib/BadBoids.pm',
     ABSTRACT            => 'YOUR APPLICATION ABSTRACT',
     ($eumm_version >= 6.3001
       ? ('LICENSE'=> 'perl')
@@ -20,6 +20,13 @@ WriteMakefile(
         'Test::More' => 0,
         'YAML'       => 0,
         'Dancer'     => 1.3115,
+	'Dancer::Template::Caribou' => 0,
+	'Dancer::Plugin::Auth::Twitter' => 0,
+	'Dancer::Plugin::Auth::Extensible' => 0,
+	map { $_ => 0 } qw/
+		DateTime::Duration::Fuzzy
+		DateTime::Format::Human::Duration
+	/
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Twisters-*' },
