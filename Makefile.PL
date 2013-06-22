@@ -26,6 +26,7 @@ WriteMakefile(
 	map { $_ => 0 } qw/
 		DateTime::Duration::Fuzzy
 		DateTime::Format::Human::Duration
+		Dancer::Session::YAML
 	/
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },

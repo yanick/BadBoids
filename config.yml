@@ -20,8 +20,10 @@ charset: "UTF-8"
 
 template: Caribou
 
+database: /home/badboids/database/store.sqlite
+
 session: YAML
-session_dir: sessions
+session_dir: /home/badboids/sessions
 
 serializer: JSON
 

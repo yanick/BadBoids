@@ -16,7 +16,8 @@ use DateTime::Functions qw/ now /;
 
 auth_twitter_init();
 
-my $store = DBIx::NoSQL->connect(['dbi:SQLite:budgerigars.sqlite', undef,
+my $db = config->{database};
+my $store = DBIx::NoSQL->connect(["dbi:SQLite:$db", undef,
         undef, { sqlite_unicode => 1 } ]);
 
 #$store->model('Status')->index('id');
