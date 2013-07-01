@@ -70,7 +70,9 @@ get '/authorized' => sub {
 };
 
 get '/profile/:profile' => sub {
-    template 'profile';
+    template 'profile', {
+        profile => param('profile'),
+    };
 };
 
 sub get_profile {

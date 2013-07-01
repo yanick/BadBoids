@@ -5,7 +5,7 @@ use Template::Caribou::Tags::HTML::Extended
 
 html {
     head {
-        title { 'Budgerigars - Piou?' };
+        title { $self->profile . ' - BadBoids' };
         javascript_include '/javascripts/jquery.js';
         javascript_include '/javascripts/mustache.js';
         javascript_include '/javascripts/jquery.mustache.js';
@@ -60,25 +60,33 @@ div { attr class => 'row';
 
 div { attr class => 'span8 offset3';
 
-div { 
+div { attr class => 'row';
+
+div { attr class => 'offset3 span3';
+    input {
+        attr type => 'button', value => 'update', id => 'refresh_button', 
+            onclick =>
+            q[$(this).attr('disabled',true);update_and_refresh().done(function(){$('#refresh_button').attr('disabled',false)})];
+    };
+};
+
+div { attr class => 'span2';
     a {
         attr href => '#dummy',
-             onclick => q{$('.tweet.hidden').show(); return false};
+             class => 'show_tweets',
+             onclick => q{$('.tweet.hidden').show(); $('.show_tweets').toggle(); return false};
         "show all";
     };
     a {
         attr href => '#dummy',
-             onclick => q{$('.tweet.hidden').hide(); return false};
+             class => 'show_tweets',
+             style => 'display: none',
+             onclick => q{$('.tweet.hidden').hide(); $('.show_tweets').toggle();return false};
         "hide tweets";
     };
 };
 
-input {
-    attr type => 'button', value => 'update', id => 'refresh_button', 
-        onclick =>
-        q[$(this).attr('disabled',true);update_and_refresh().done(function(){$('#refresh_button').attr('disabled',false)})];
 };
-
 
 div { attr id => 'timeline_firehose', class => 'timeline';
     div {
